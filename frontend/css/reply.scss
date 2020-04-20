@@ -1,0 +1,30 @@
+span {
+    font-family: 'Open Sans';
+}
+
+.reply-content {
+    font-weight: normal;
+    color: #a7a7a7;
+}
+
+.reply-name {
+    color: #93b8c4;
+    font-weight: bold;
+}
+
+.reply-box {
+    width: 90%;
+}
+
+.comment-reply {
+    background-color: #f1f1f1;
+    padding: 10px;
+    transition: 0.2s linear background-color;
+    &:hover {
+        background-color: #e7e7e7;
+        cursor: pointer;
+    }
+    &:active {
+        background-color: #ededed;
+    }
+}
