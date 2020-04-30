@@ -1,10 +1,12 @@
 import React from "react";
 
+import { SaveMessage } from "../../client";
+
 export { PublishBox };
 
 const gravatarUrl = require("gravatar-url");
 
-const defaultPublishImage = "http://img.sardinefish.com/ODYyMjQx";
+const defaultPublishImage = "https://i.loli.net/2020/04/30/rRYvdhNXfFlT3uS.png";
 
 const nameReg = new RegExp("[a-zA-Z]*[1-9]*[_]*"),
   emailReg = new RegExp(
@@ -125,6 +127,14 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
       const { name, email, content } = this.state;
       const time = GetCurrentTime();
       this.props.onSubmit({ name, email, content, time });
+
+      let message = {
+        name: name,
+        email: email,
+        time: time,
+        content: content
+      };
+      SaveMessage(JSON.stringify(message));
     }
     this.setState({ content: "" });
   }
@@ -162,7 +172,7 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
                   value={this.state.email}
                   onChange={this.handleEmailChange}
                   className="email-input"
-                  maxLength={256}
+                  maxLength={255}
                   placeholder="email(optional)"
                   onBlur={this.handleOnBlur}
                 ></input>

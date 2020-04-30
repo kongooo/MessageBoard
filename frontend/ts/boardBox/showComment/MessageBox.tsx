@@ -5,15 +5,18 @@ import "../../../css/message.scss";
 import { CommentReply } from "./CommentReply";
 import { CommentPanel } from "./CommentPanel";
 
+import {SaveComment} from "../../client"
+
 export { MessageBox };
 
 const gravatarUrl = require("gravatar-url");
 
-const defauldCommentImage = "http://img.sardinefish.com/ODY0NTI3";
+const defauldCommentImage = "https://i.loli.net/2020/04/30/LglI7DCyEH28bZz.png";
 
 interface MessageBoxProps {
   comment: any;
   onSubmit: any;
+  initialReplys: [];
 }
 
 interface MessageBoxStates {
@@ -39,6 +42,15 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
     this.handlePanelShow = this.handlePanelShow.bind(this);
   }
 
+  componentDidMount() {
+    let id = setInterval(()=>{
+      if (this.props.initialReplys !== undefined){
+        this.setState({ replys: this.props.initialReplys });
+        clearInterval(id);
+      }
+    }, 10);
+  }
+
   handlePanelShow(n: string, c: boolean) {
     let name = this.props.onSubmit();
     if (name !== false) {
@@ -53,10 +65,12 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
       let newReply = {
         name: this.currentName,
         content: c,
-        replyName: this.currentReplyName
+        replyName: this.currentReplyName,
+        index: this.props.comment.index
       };
       this.state.replys.push(newReply);
       this.setState({ replys: this.state.replys });
+      SaveComment(JSON.stringify(newReply));
     }
   }
 

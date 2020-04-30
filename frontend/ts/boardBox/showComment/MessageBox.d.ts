@@ -4,6 +4,7 @@ export { MessageBox };
 interface MessageBoxProps {
     comment: any;
     onSubmit: any;
+    initialReplys: [];
 }
 interface MessageBoxStates {
     replys: Array<any>;
@@ -13,6 +14,7 @@ declare class MessageBox extends React.Component<MessageBoxProps, MessageBoxStat
     currentName: string;
     currentReplyName: string;
     constructor(props: MessageBoxProps);
+    componentDidMount(): void;
     handlePanelShow(n: string, c: boolean): void;
     handleCommentSubmit(c: any): void;
     handleCommentPanelShow(): void;
