@@ -4,7 +4,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     entry: {
-        MessageBoard: './frontend/ts/MessageBoard.tsx',
+        loading: './frontend/ts/loading.ts',
+        MessageBoard: './frontend/ts/MessageBoard.tsx'
     },
     output: {
         filename: '[name].bundle.js',

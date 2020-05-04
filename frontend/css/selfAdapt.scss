@@ -77,6 +77,55 @@
     }
 }
 
+@media screen and (max-width:500px) {
+    .publish-button {
+        margin-top: -7px !important;
+    }
+    .author-content {
+        margin-top: 0 !important;
+        width: 75% !important;
+    }
+    .comment {
+        width: 90% !important;
+    }
+    .content {
+        padding: 0 15px !important;
+    }
+    .reply {
+        margin-top: -10px !important;
+    }
+}
+
+@media screen and (max-width:450px) {
+    .time {
+        margin-left: 57% !important;
+    }
+}
+
+@media screen and (max-width:400px) {
+    .time {
+        margin-left: 50% !important;
+    }
+    .comment-content {
+        width: 65% !important;
+    }
+    .author-content {
+        width: 72% !important;
+    }
+    .publish-button {
+        margin-left: 88% !important;
+    }
+    .reply {
+        margin-left: 0 !important;
+    }
+}
+
+@media screen and (max-width:350px) {
+    .time {
+        margin-left: 42% !important;
+    }
+}
+
 @media screen and (max-width:1000px) and (min-width:800px) {
     .time {
         margin-left: 68% !important;
