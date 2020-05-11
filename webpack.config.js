@@ -13,7 +13,7 @@ module.exports = {
         publicPath: './'
     },
     devtool: 'source-map',
-    mode: 'development',
+    mode: 'production',
     devServer: {
         contentBase: './dist',
         writeToDisk: true,
