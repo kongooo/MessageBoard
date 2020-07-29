@@ -7,7 +7,7 @@ import Koa from 'koa';
 import "reflect-metadata";
 
 import { Message } from "./entity/Message"
-import { Comment } from './entity/Comment';
+import { Comment } from './entity/Comment'
 import { connect } from './pw'
 
 const app = new Koa();
@@ -20,7 +20,7 @@ const home = new router();
 
 let messages: JSON[] = new Array();
 
-let comments: JSON[][] = new Array;
+let comments: JSON[][] = new Array();
 
 function loading() {
     return connect.then(async connection => {
@@ -28,7 +28,7 @@ function loading() {
         messages = [];
         comments = [];
 
-        let MessageRepository = connection.getRepository(Message);
+        let MessageRepository = await connection.getRepository(Message);
 
         const ms = await MessageRepository.find({ relations: ["comments"] });
 

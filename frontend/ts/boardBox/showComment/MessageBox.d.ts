@@ -5,6 +5,8 @@ interface MessageBoxProps {
     comment: any;
     onSubmit: any;
     initialReplys: [];
+    register: Function;
+    index: number;
 }
 interface MessageBoxStates {
     replys: Array<any>;

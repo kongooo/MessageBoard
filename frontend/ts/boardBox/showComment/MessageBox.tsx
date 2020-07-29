@@ -1,22 +1,24 @@
-import React from "react";
+import React, { JSXElementConstructor, DOMElement } from "react";
 
 import "../../../css/message.scss";
 
 import { CommentReply } from "./CommentReply";
 import { CommentPanel } from "./CommentPanel";
 
-import {SaveComment} from "../../client"
-
-export { MessageBox };
+import { SaveComment } from "../../client";
 
 const gravatarUrl = require("gravatar-url");
 
-const defauldCommentImage = "https://i.loli.net/2020/04/30/LglI7DCyEH28bZz.png";
+const defauldCommentImage = "https://s1.ax1x.com/2020/07/29/aZeSHK.png";
+
+export { MessageBox };
 
 interface MessageBoxProps {
   comment: any;
   onSubmit: any;
   initialReplys: [];
+  register: Function;
+  index: number;
 }
 
 interface MessageBoxStates {
@@ -32,7 +34,7 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
     super(props);
 
     this.state = {
-      replys: []
+      replys: [],
     };
 
     this.OnRef = this.OnRef.bind(this);
@@ -43,12 +45,15 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
   }
 
   componentDidMount() {
-    let id = setInterval(()=>{
-      if (this.props.initialReplys !== undefined){
+    let id = setInterval(() => {
+      if (this.props.initialReplys !== undefined) {
         this.setState({ replys: this.props.initialReplys });
         clearInterval(id);
       }
     }, 10);
+    this.props.register(
+      document.querySelector(`.gravatar-image${this.props.index}`)
+    );
   }
 
   handlePanelShow(n: string, c: boolean) {
@@ -66,7 +71,7 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
         name: this.currentName,
         content: c,
         replyName: this.currentReplyName,
-        index: this.props.comment.index
+        index: this.props.comment.index,
       };
       this.state.replys.push(newReply);
       this.setState({ replys: this.state.replys });
@@ -98,7 +103,10 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
         <div className="publish message-show">
           <div className="author">
             <div className="author-avater">
-              <img src={GetEmailAvatar(this.props.comment.email)}></img>
+              <img
+                className={`gravatar-image${this.props.index}`}
+                data-src={GetEmailAvatar(this.props.comment.email)}
+              ></img>
             </div>
 
             <div className="name">{this.props.comment.name}</div>
@@ -144,7 +152,7 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
           <div
             className="reply-box"
             style={{
-              marginBottom: this.state.replys.length > 0 ? "30px" : "0"
+              marginBottom: this.state.replys.length > 0 ? "30px" : "0",
             }}
           >
             {this.state.replys.map((reply, i) => (

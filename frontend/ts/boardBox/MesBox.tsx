@@ -16,36 +16,64 @@ interface MesBoxStates {
 
 class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
   publish: any;
+  observer: IntersectionObserver;
 
   constructor(props: MesBoxProps) {
     super(props);
 
     this.state = {
       comments: [],
-      initialReplys: []
+      initialReplys: [],
     };
 
     this.handlePublish = this.handlePublish.bind(this);
     this.OnRef = this.OnRef.bind(this);
     this.handleComment = this.handleComment.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
+    this.initObserver();
   }
 
   componentDidMount() {
     Promise.resolve(GetMessages())
-      .then(async result => {
+      .then(async (result) => {
         let t = JSON.parse(result);
         this.setState({ comments: t.reverse() });
       })
       .then(async () => {
-        Promise.resolve(GetComments()).then(r => {
+        Promise.resolve(GetComments()).then((r) => {
           let t = JSON.parse(r);
           this.setState({ initialReplys: t.reverse() });
         });
       });
   }
 
+  initObserver() {
+    this.observer = new IntersectionObserver((ioes) => {
+      ioes.forEach((ioe) => {
+        const e = ioe.target as HTMLImageElement;
+        const ratio = ioe.intersectionRatio;
+        if (ratio > 0 && ratio <= 1) {
+          this.loadImage(e);
+        }
+        e.onload = e.onerror = () => {
+          this.observer.unobserve(e);
+        };
+      });
+    });
+  }
+
+  loadImage(e: HTMLImageElement) {
+    if (!e.src) {
+      e.src = e.dataset.src;
+    }
+  }
+
   OnRef(ref: any) {
     this.publish = ref;
+  }
+
+  handleRegister(item: HTMLImageElement) {
+    this.observer.observe(item);
   }
 
   handlePublish(m: any) {
@@ -54,7 +82,7 @@ class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
     this.state.initialReplys.unshift([]);
     this.setState({
       comments: this.state.comments,
-      initialReplys: this.state.initialReplys
+      initialReplys: this.state.initialReplys,
     });
   }
 
@@ -73,6 +101,8 @@ class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
               comment={comment}
               key={this.state.comments.length - 1 - i}
               initialReplys={this.state.initialReplys[i]}
+              register={this.handleRegister}
+              index={i}
             ></MessageBox>
           ))}
         </div>

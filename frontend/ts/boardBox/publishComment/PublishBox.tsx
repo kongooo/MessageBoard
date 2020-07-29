@@ -6,7 +6,7 @@ export { PublishBox };
 
 const gravatarUrl = require("gravatar-url");
 
-const defaultPublishImage = "https://i.loli.net/2020/04/30/rRYvdhNXfFlT3uS.png";
+const defaultPublishImage = "https://s1.ax1x.com/2020/07/29/aeJE6K.png";
 
 const nameReg = new RegExp("[a-zA-Z]*[1-9]*[_]*"),
   emailReg = new RegExp(
@@ -25,10 +25,11 @@ interface PublishBoxStates {
   content: string;
   nameHint: boolean;
   emailHint: boolean;
-  avatarImage: string;
 }
 
 class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
+  image: HTMLImageElement;
+
   constructor(props: PublishBoxProps) {
     super(props);
 
@@ -38,7 +39,6 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
       content: "",
       nameHint: false,
       emailHint: false,
-      avatarImage: defaultPublishImage
     };
 
     this.handleNameChange = this.handleNameChange.bind(this);
@@ -52,6 +52,9 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
 
   componentDidMount() {
     this.props.OnRef(this);
+    this.image = document.querySelector(
+      ".publish-gravatar"
+    ) as HTMLImageElement;
   }
 
   handleNameChange(e: any) {
@@ -60,19 +63,17 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
 
   handleEmailChange(e: any) {
     this.setState({
-      email: e.target.value
+      email: e.target.value,
     });
   }
 
-  handleOnBlur() {
+  async handleOnBlur() {
     if (emailReg.test(this.state.email) === true) {
       let imageUrl = gravatarUrl(this.state.email, { size: 200 });
 
       imageUrl += "&d=" + defaultPublishImage;
 
-      this.setState({
-        avatarImage: imageUrl
-      });
+      this.image.src = imageUrl;
     }
   }
 
@@ -132,7 +133,7 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
         name: name,
         email: email,
         time: time,
-        content: content
+        content: content,
       };
       SaveMessage(JSON.stringify(message));
     }
@@ -145,7 +146,7 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
         <div className="publish">
           <div className="author">
             <div className="author-avater">
-              <img src={this.state.avatarImage}></img>
+              <img className="publish-gravatar"></img>
             </div>
 
             <div className="author-info">

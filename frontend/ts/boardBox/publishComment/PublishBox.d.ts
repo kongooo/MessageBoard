@@ -10,14 +10,14 @@ interface PublishBoxStates {
     content: string;
     nameHint: boolean;
     emailHint: boolean;
-    avatarImage: string;
 }
 declare class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
+    image: HTMLImageElement;
     constructor(props: PublishBoxProps);
     componentDidMount(): void;
     handleNameChange(e: any): void;
     handleEmailChange(e: any): void;
-    handleOnBlur(): void;
+    handleOnBlur(): Promise<void>;
     handleContentChange(e: any): void;
     judgeName(): string | false;
     judgeNameAndEmail(): boolean;
