@@ -9,23 +9,25 @@ function myFetch(meth: HTTPMethods, url: string, data?: any) {
         headers: data == undefined ? undefined : new Headers({
             'Content-type': "application/json"
         })
-    }).then(response => response.json());
+    });
 }
 
-async function GetMessages(){
+async function GetMessages() {
     let t = await myFetch('GET', './messages');
-    return JSON.stringify(t);
+    let res = await t.json();
+    return JSON.stringify(res);
 }
 
-async function GetComments(){
+async function GetComments() {
     let t = await myFetch('GET', './comments');
-    return JSON.stringify(t);
+    let res = await t.json();
+    return JSON.stringify(res);
 }
 
-async function SaveMessage(message:any){
-    await myFetch('PUT', './message', message);
+async function SaveMessage(message: any) {
+    await myFetch('POST', './message', message);
 }
 
-async function SaveComment(comment:any){
-    await myFetch('PUT', './comment', comment);
+async function SaveComment(comment: any) {
+    await myFetch('POST', './comment', comment);
 }
