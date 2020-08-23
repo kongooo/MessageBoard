@@ -25,9 +25,6 @@ let comments: JSON[][] = new Array();
 function loading() {
     return connect.then(async connection => {
 
-        messages = [];
-        comments = [];
-
         let MessageRepository = await connection.getRepository(Message);
 
         const ms = await MessageRepository.find({ relations: ["comments"] });
@@ -79,11 +76,16 @@ function saveComment(ctx: any) {
             newCom.name = ctx.request.body.name;
             newCom.content = ctx.request.body.content;
             newCom.replyName = ctx.request.body.replyName;
+
+            let i = ctx.request.body.index;
+            if(comments[i]===undefined) comments[i] = [];
+            comments[i].push(JSON.parse(JSON.stringify(newCom)));
+
             let parent = await connection.getRepository(Message).find({ index: ctx.request.body.index });
             if (parent != null) {
                 newCom.message = parent[0];
                 if (parent[0].comments === undefined) {
-                    parent[0].comments = new Array();
+                    parent[0].comments = [];
                 }
                 parent[0].comments.push(newCom);
             }
@@ -95,11 +97,10 @@ function saveComment(ctx: any) {
     }
 }
 
+loading();
+
 home.get('/messages', async (ctx, next) => {
-    await loading().then(() => {
-        ctx.response.body = messages.length > 0 ? messages : null;
-    })
-    await next();
+    ctx.response.body = messages.length > 0 ? messages : null;
 }).get('/comments', async (ctx, next) => {
     ctx.response.body = comments.length > 0 ? comments : null;
     await next();
