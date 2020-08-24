@@ -16,9 +16,7 @@ export { MessageBox };
 interface MessageBoxProps {
   comment: any;
   onSubmit: any;
-  initialReplys: [];
   register: Function;
-  index: number;
 }
 
 interface MessageBoxStates {
@@ -46,13 +44,13 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
 
   componentDidMount() {
     let id = setInterval(() => {
-      if (this.props.initialReplys !== undefined) {
-        this.setState({ replys: this.props.initialReplys });
+      if (this.props.comment !== undefined) {
+        this.setState({ replys: this.props.comment.comments });
         clearInterval(id);
       }
     }, 10);
     this.props.register(
-      document.querySelector(`.gravatar-image${this.props.index}`)
+      document.querySelector(`.gravatar-image${this.props.comment.id}`)
     );
   }
 
@@ -70,8 +68,7 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
       let newReply = {
         name: this.currentName,
         content: c,
-        replyName: this.currentReplyName,
-        index: this.props.comment.index,
+        replyName: this.currentReplyName
       };
       this.state.replys.push(newReply);
       this.setState({ replys: this.state.replys });
@@ -104,7 +101,7 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
           <div className="author">
             <div className="author-avater">
               <img
-                className={`gravatar-image${this.props.index}`}
+                className={`gravatar-image${this.props.comment.id}`}
                 data-src={GetEmailAvatar(this.props.comment.email)}
               ></img>
             </div>

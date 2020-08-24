@@ -21,6 +21,6 @@ declare class PublishBox extends React.Component<PublishBoxProps, PublishBoxStat
     handleContentChange(e: any): void;
     judgeName(): string | false;
     judgeNameAndEmail(): boolean;
-    handleSubmit(): void;
+    handleSubmit(): Promise<void>;
     render(): JSX.Element;
 }

@@ -3,7 +3,7 @@ import React from "react";
 import { PublishBox } from "./publishComment/PublishBox";
 import { MessageBox } from "./showComment/MessageBox";
 
-import { GetMessages, GetComments } from "../client";
+import { GetMessages } from "../client";
 
 export { MesBox };
 
@@ -34,17 +34,16 @@ class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
   }
 
   componentDidMount() {
-    Promise.resolve(GetMessages())
-      .then(async (result) => {
-        let t = JSON.parse(result);
-        this.setState({ comments: t.reverse() });
-      })
-      .then(async () => {
-        Promise.resolve(GetComments()).then((r) => {
-          let t = JSON.parse(r);
-          this.setState({ initialReplys: t.reverse() });
-        });
-      });
+    Promise.resolve(GetMessages()).then(async (result) => {
+      // let t = JSON.parse(result);
+      this.setState({ comments: result.reverse() });
+    });
+    // .then(async () => {
+    //   Promise.resolve(GetComments()).then((r) => {
+    //     let t = JSON.parse(r);
+    //     this.setState({ initialReplys: t.reverse() });
+    //   });
+    // });
   }
 
   initObserver() {
@@ -77,12 +76,9 @@ class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
   }
 
   handlePublish(m: any) {
-    m.index = this.state.comments.length;
     this.state.comments.unshift(m);
-    this.state.initialReplys.unshift([]);
     this.setState({
       comments: this.state.comments,
-      initialReplys: this.state.initialReplys,
     });
   }
 
@@ -100,9 +96,7 @@ class MesBox extends React.Component<MesBoxProps, MesBoxStates> {
               onSubmit={this.handleComment}
               comment={comment}
               key={this.state.comments.length - 1 - i}
-              initialReplys={this.state.initialReplys[i]}
               register={this.handleRegister}
-              index={i}
             ></MessageBox>
           ))}
         </div>

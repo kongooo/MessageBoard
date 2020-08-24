@@ -7,9 +7,6 @@ export class Message {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    index: number;
-
     @Column({
         length: 12
     })

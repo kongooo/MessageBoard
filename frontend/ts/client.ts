@@ -1,4 +1,4 @@
-export { GetMessages, GetComments, SaveMessage, SaveComment };
+export { GetMessages, SaveMessage, SaveComment};
 
 type HTTPMethods = 'GET' | 'POST' | 'PUT';
 
@@ -15,17 +15,13 @@ function myFetch(meth: HTTPMethods, url: string, data?: any) {
 async function GetMessages() {
     let t = await myFetch('GET', './messages');
     let res = await t.json();
-    return JSON.stringify(res);
-}
-
-async function GetComments() {
-    let t = await myFetch('GET', './comments');
-    let res = await t.json();
-    return JSON.stringify(res);
+    return res;
 }
 
 async function SaveMessage(message: any) {
-    await myFetch('POST', './message', message);
+    let t = await (await myFetch('POST', './message', message)).json();
+    console.log(t);
+    return t;
 }
 
 async function SaveComment(comment: any) {

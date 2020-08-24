@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SaveMessage } from "../../client";
+import { SaveMessage} from "../../client";
 
 export { PublishBox };
 
@@ -122,22 +122,29 @@ class PublishBox extends React.Component<PublishBoxProps, PublishBoxStates> {
     return true;
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     if (this.props.onSubmit) {
       if (this.judgeNameAndEmail() === false) return;
       const { name, email, content } = this.state;
       const time = GetCurrentTime();
-      this.props.onSubmit({ name, email, content, time });
 
       let message = {
         name: name,
         email: email,
         time: time,
         content: content,
+        comments: new Array(),
+        id: 0
       };
-      SaveMessage(JSON.stringify(message));
-    }
-    this.setState({ content: "" });
+
+      Promise.resolve(SaveMessage(JSON.stringify(message))).then(v=>{
+        message.id = v;
+        this.props.onSubmit(message);
+      })
+
+    };
+
+    this.setState({ content: " " });
   }
 
   render() {

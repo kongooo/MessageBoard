@@ -18,10 +18,6 @@ const main = serve(temp_path);
 
 const home = new router();
 
-let messages: JSON[] = new Array();
-
-let comments: JSON[][] = new Array();
-
 function loading() {
     return connect.then(async connection => {
 
@@ -29,39 +25,28 @@ function loading() {
 
         const ms = await MessageRepository.find({ relations: ["comments"] });
 
-        let i = 0;
-        ms.forEach(m => {
-            let temp = JSON.parse(JSON.stringify(m));
-            temp.time = GetLocalTime(new Date(m.time));
-            messages.push(temp);
-
-            comments[i] = new Array();
-            let cs = m.comments;
-            cs.forEach(c => {
-                comments[i].push(JSON.parse(JSON.stringify(c)));
-            })
-            i++;
-        });
+        ms.map(m => {
+            m.time = GetLocalTime(new Date(m.time));
+        })
+        return JSON.parse(JSON.stringify(ms));
 
     }).catch(error => console.log(error));
 }
 
 function saveMessage(ctx: any) {
     try {
-        connect.then(async connection => {
+        return connect.then(async connection => {
 
             let newMes = new Message();
             newMes.name = ctx.request.body.name;
             newMes.email = ctx.request.body.email;
             newMes.time = ctx.request.body.time;
             newMes.content = ctx.request.body.content;
-            newMes.index = messages.length;
-            newMes.comments = new Array();
+            newMes.comments = ctx.request.body.comments;
 
-            messages.push(JSON.parse(JSON.stringify(newMes)));
-
-            connection.manager.save(newMes);
-            ctx.response.status = 200;
+            await connection.manager.save(newMes);
+            let mes = await connection.getRepository(Message).findOne({ time: newMes.time, email: newMes.email, name: newMes.name });
+            return mes.id;
 
         }).catch(error => console.log(error));
     } catch (e) {
@@ -71,45 +56,39 @@ function saveMessage(ctx: any) {
 
 function saveComment(ctx: any) {
     try {
-        connect.then(async connection => {
+        return connect.then(async connection => {
             let newCom = new Comment();
             newCom.name = ctx.request.body.name;
             newCom.content = ctx.request.body.content;
             newCom.replyName = ctx.request.body.replyName;
 
-            let i = ctx.request.body.index;
-            if(comments[i]===undefined) comments[i] = [];
-            comments[i].push(JSON.parse(JSON.stringify(newCom)));
+            let parent = await connection.getRepository(Message).findOne(ctx.request.body.index);
 
-            let parent = await connection.getRepository(Message).find({ index: ctx.request.body.index });
             if (parent != null) {
-                newCom.message = parent[0];
-                if (parent[0].comments === undefined) {
-                    parent[0].comments = [];
-                }
-                parent[0].comments.push(newCom);
+                newCom.message = parent;
+                if (parent.comments === undefined) parent.comments = [];
+                parent.comments.push(newCom);
             }
-            connection.manager.save(newCom);
-            ctx.response.status = 200;
+            await connection.manager.save(newCom);
         })
+
     } catch (e) {
         console.log(e);
     }
 }
 
-loading();
-
-home.get('/messages', async (ctx, next) => {
-    ctx.response.body = messages.length > 0 ? messages : null;
-}).get('/comments', async (ctx, next) => {
-    ctx.response.body = comments.length > 0 ? comments : null;
-    await next();
-}).post('/message', async (ctx, next) => {
-    saveMessage(ctx);
-    await next();
-}).post('/comment', async (ctx, next) => {
-    saveComment(ctx);
-    await next();
+home.get('/messages', async ctx => {
+    await loading().then(v => {
+        ctx.response.body = v;
+    })
+}).post('/message', async ctx => {
+    await saveMessage(ctx).then(v => {
+        ctx.response.body = v;
+    })
+}).post('/comment', async ctx => {
+    await saveComment(ctx).then(() => {
+        ctx.response.status = 200;
+    })
 })
 
 app.use(main)
