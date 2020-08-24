@@ -68,7 +68,8 @@ class MessageBox extends React.Component<MessageBoxProps, MessageBoxStates> {
       let newReply = {
         name: this.currentName,
         content: c,
-        replyName: this.currentReplyName
+        replyName: this.currentReplyName,
+        messageID: this.props.comment.id
       };
       this.state.replys.push(newReply);
       this.setState({ replys: this.state.replys });

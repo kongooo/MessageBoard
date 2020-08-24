@@ -62,7 +62,7 @@ function saveComment(ctx: any) {
             newCom.content = ctx.request.body.content;
             newCom.replyName = ctx.request.body.replyName;
 
-            let parent = await connection.getRepository(Message).findOne(ctx.request.body.index);
+            let parent = await connection.getRepository(Message).findOne(ctx.request.body.messageID);
 
             if (parent != null) {
                 newCom.message = parent;
